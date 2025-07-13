@@ -34,7 +34,7 @@ A basic e-commerce product management system built using **Spring Boot**, **Java
 
 3. Add users in your database with roles:
 
-     ROLE_ADMIN
+     ROLE_ADMIN, 
      ROLE_USER
 
 4. Compile and run the project:
