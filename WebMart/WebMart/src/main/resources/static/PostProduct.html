@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>add product</title>
+</head>
+<body>
+<h2>Enter Product Details</h2>
+<form id="product-form">
+    <label>
+        Name:
+        <input type="text" id="name" required>
+    </label>
+    <br><br>
+    <label>
+        Brand:
+        <input type="text" id="brand" required>
+    </label>
+    <br><br>
+    <label>
+        Description:
+        <input type="text" id="description" required>
+    </label>
+    <br><br>
+    <label>
+        Price:
+        <input type="number" id="price" step="0.01" min="0" required>
+    </label>
+    <br><br>
+    <label>
+        In Stock:
+        <input type="checkbox" id="availability">
+    </label>
+    <br><br>
+    <button id="submit">submit</button>
+    <p id="response"></p>
+
+    <script>
+        document.getElementById('product-form').addEventListener('submit', function(event){
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const brand = document.getElementById('brand').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const availability = document.getElementById('availability').checked;
+
+            fetch('http://localhost:8080/webmart/add',{
+                method : 'POST' ,
+                headers : {
+                    'Content-Type' : 'application/json'
+                } ,
+                body : JSON.stringify({name,brand,description,price,availability}),
+                credentials :'include'
+            })
+            .then(response => {
+                if(!response.ok){
+                    console.error('Error add details is: ',error);
+                }else{
+                    return response.json();
+                }
+            })
+            .then(data =>{
+                document.getElementById('response').textContent = 'Successfully added data!';
+                console.log('Ok',data);
+            })
+            .catch(error =>{
+                document.getElementById('response').textContent = 'Failed to add data!';
+                console.error('Error while adding data is',error);
+            });
+        });
+    </script>
+</form>
+</body>
+</html>

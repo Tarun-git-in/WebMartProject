@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<h1>Products</h1>
+<div id="product-container"></div>
+
+<script>
+    fetch('http://localhost:8080/webmart/get',{
+    method : 'GET',
+    credentials : 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('product-container');
+        data.forEach(products => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+
+                            <b>${products.name}</b>
+                            <br><hr>
+                            ProductID:
+                            ${products.id}
+                            <br>
+                            Brand: ${products.brand}
+                            <br>
+                            Description: ${products.description}
+                            <br>
+                            Price: $${products.price}
+                            <br>
+                            Availability: ${products.availability}
+                            <br><br>`;
+            container.appendChild(div);
+        });
+    })
+    .catch(error =>{
+        console.error("Error fetchind data!",error);
+    });
+</script>
+</body>
+</html>

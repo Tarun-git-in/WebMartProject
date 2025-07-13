@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<form id="product-form">
+    <label>
+        Product ID:
+        <input type="number" id="id" min="0" required>
+    </label>
+    <button type="button" id="load">Load</button>
+    <br><br>
+    <p id="message"></p>
+    <label>
+        Name:
+        <input type="text" id="name" readonly>
+    </label>
+    <br><br>
+    <label>
+        Brand:
+        <input type="text" id="brand" readonly>
+    </label>
+    <br><br>
+    <label>
+        Description:
+        <input type="text" id="description" required>
+    </label>
+    <br><br>
+    <label>
+        Price:
+        <input type="number" id="price" min="0" step="0.01" required>
+    </label>
+    <br><br>
+    <label>
+        In stock:
+        <input type="checkbox" id="availability">
+    </label>
+    <br><br>
+    <button type="submit" id="submit">Send</button>
+</form>
+<p id="response"></p>
+
+<script>
+    document.getElementById('load').addEventListener('click',function(){
+        const productID = document.getElementById('id').value;
+        if(!productID){
+            alert('please enter a product ID');
+            return;
+        }
+        fetch(`http://localhost:8080/webmart/get/${productID}`,{
+        method : 'GET',
+        credentials : 'include'
+        })
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Product not Found!');
+            }
+            return response.json();
+        })
+        .then(product =>{
+            document.getElementById('name').value = `${product.name}`;
+            document.getElementById('brand').value = `${product.brand}`;
+            document.getElementById('description').value = `${product.description}`;
+            document.getElementById('price').value = `${product.price}`;
+            document.getElementById('availability').checked = `${product.availability}`;
+            document.getElementById('message').textContent = 'Edit the details:';
+        })
+        .catch(error=>{
+            console.error('error while fetching data is:',error);
+            document.getElementById('message').textContent = 'Product does not exists';
+        });
+
+    });
+    document.getElementById('product-form').addEventListener('submit',function(event){
+        event.preventDefault();
+        const productID = document.getElementById('id').value;
+        const description = document.getElementById('description').value;
+        const price = document.getElementById('price').value;
+        const availability = document.getElementById('availability').checked;
+
+        fetch(`http://localhost:8080/webmart/update/${productID}`,{
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({description, price, availability }),
+            credentials : 'include'
+        })
+        .then(response =>{
+            if(!response.ok){
+                throw new Error('Network not responding')
+            }else{
+                return response.json();
+            }
+        })
+        .then(data =>{
+            document.getElementById('response').textContent = 'sucessfully updated data';
+            console.log('Success',data);
+        })
+        .catch(error =>{
+            document.getElementById('response').textContent = 'internal server Error';
+            console.error('while updating data is',error);
+        });
+    });
+</script>
+</body>
+</html>

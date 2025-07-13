@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<h2>Delete Product</h2>
+<form id="delete-form">
+    Enter ID of the product:
+
+    <label>
+        <input id="id" min="0" required type="number" >
+    </label>
+
+    <button id="submit">delete</button>
+</form>
+<p id="response"></p>
+<script>
+    document.getElementById('delete-form').addEventListener('submit',function(event){
+     event.preventDefault();
+     const productID = document.getElementById('id').value;
+     fetch(`http://localhost:8080/webmart/delete/${productID}`,{
+         method : 'DELETE',
+         credentials :'include'
+     })
+     .then(response =>{
+         if(!response.ok){
+             throw new Error('Internal server error',error);
+         }
+         return response.text();
+     })
+     .then(data =>{
+         document.getElementById('response').textContent = 'successfully deleted the data';
+         console.log('success',data);
+     })
+     .catch(error =>{
+         document.getElementById('response').textContent = 'Failed to delete the data';
+         console.error('Error while deleting data: ',error);
+     })
+     })
+</script>
+</body>
+</html>
